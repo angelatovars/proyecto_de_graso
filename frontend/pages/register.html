@@ -2,13 +2,21 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Usuario</title>
     <link rel="stylesheet" href="../css/register.css">
+    <!-- Agregar EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function(){
+            emailjs.init("TU_PUBLIC_KEY"); // Aquí pondrás tu clave pública de EmailJS
+        })();
+    </script>
 </head>
 <body>
     <div class="register-container">
         <h2>Regístrate</h2>
-        <form id="registerForm">
+        <form id="registerForm" onsubmit="register(event)">
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required>
 

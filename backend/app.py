@@ -1,6 +1,7 @@
 from flask import Flask
-from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
+from datetime import timedelta
 from settings.config import Config
 from routes.profile_routes import api as profile_api
 from routes.auth_routes import api as auth_api
@@ -13,9 +14,17 @@ app = Flask(__name__)
 
 # Configuración de la aplicación
 app.config.from_object(Config)
+app.config['JWT_SECRET_KEY'] = 'tu-clave-secreta'  # Cambia esto por una clave segura
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 
 # Habilitar CORS (Cross-Origin Resource Sharing)
-CORS(app)
+CORS(app, resources={
+    r"/api/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
 
 # Inicializar el manejador de JWT
 jwt = JWTManager(app)

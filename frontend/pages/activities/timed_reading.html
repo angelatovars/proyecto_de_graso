@@ -3,36 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lectura con Cronómetro</title>
+    <title>Timed Reading</title>
     <link rel="stylesheet" href="../../css/timed_reading.css">
 </head>
 <body>
     <div class="container">
-        <h1>Lectura con Cronómetro</h1>
-
-        <!-- Contenedor de controles -->
-        <div class="controls-container">
-            <button id="startButton" class="btn" onclick="iniciarCronometro()">Iniciar</button>
-            <button id="stopButton" class="btn" onclick="detenerCronometro()">Detener</button>
-            <button id="menuButton" class="btn" onclick="volverAlMenu()">Volver al Menú</button>
-            <button id="startVoice" class="btn" onclick="activarReconocimientoVoz()">Activar Reconocimiento de Voz</button>
+        <h1>Timed Reading</h1>
+        
+        <div class="game-info">
+            <span id="vidas">❤️❤️❤️</span>
+            <span id="puntaje">🏆 0</span>
+            <span id="tiempo">⏱ 00:00</span>
         </div>
 
-        <!-- Cronómetro y puntaje -->
-        <div class="status-container">
-            <p id="tiempo">⏱ Tiempo: 00:00:00</p>
-            <p id="puntaje">🏆 Puntaje: 0</p>
+        <div class="game-container">
+            <p id="textoLectura" class="texto-lectura"></p>
+            <p id="vozDetectada" class="voz-detectada"></p>
+            
+            <div class="controles">
+                <button id="startButton" onclick="iniciarCronometro()" class="btn-control">
+                    Iniciar Lectura
+                </button>
+                <button id="btnTerminado" style="display: none;" onclick="verificarFrase()" class="btn-control">
+                    He terminado de leer
+                </button>
+                <button onclick="activarReconocimientoVoz()" class="btn-control">
+                    Activar Micrófono 🎤
+                </button>
+                <button onclick="volverAlMenu()" class="btn-control">
+                    Volver al Menú
+                </button>
+            </div>
         </div>
 
-        <!-- Contenedor del texto de lectura -->
-        <div class="reading-container">
-            <p id="textoLectura"></p>
-        </div>
-
-        <!-- Palabra detectada -->
-        <div class="voice-recognition">
-            <p id="vozDetectada">🎤 Palabra Detectada: Ninguna</p>
-        </div>
+        <div id="mensaje" style="display: none;"></div>
     </div>
 
     <script src="../../js/timed_reading.js"></script>

@@ -22,22 +22,42 @@ class ProfileModel:
     def update_profile(user_id, data):
         connection = create_connection()
         cursor = connection.cursor()
-        query = """
+        
+        # Primero actualizamos la tabla Usuarios
+        user_query = """
+            UPDATE Usuarios 
+            SET nombre = %s, edad = %s
+            WHERE id_usuario = %s
+        """
+        
+        # Luego actualizamos la tabla Perfiles
+        profile_query = """
             UPDATE Perfiles 
             SET notificaciones = %s, tema_preferido = %s, nivel_preferido = %s 
             WHERE id_usuario = %s
         """
+        
         try:
-            cursor.execute(query, (
+            # Actualizar datos de usuario
+            cursor.execute(user_query, (
+                data.get("nombre"),
+                data.get("edad"),
+                user_id
+            ))
+            
+            # Actualizar datos de perfil
+            cursor.execute(profile_query, (
                 data.get("notificaciones"),
                 data.get("tema_preferido"),
                 data.get("nivel_preferido"),
                 user_id
             ))
+            
             connection.commit()
             return True
         except Exception as e:
-            print(e)
+            print(f"Error al actualizar perfil: {e}")
+            connection.rollback()
             return False
         finally:
             cursor.close()

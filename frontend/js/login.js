@@ -19,7 +19,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             const token = data.access_token;
             
             // Guardar el token y el correo en localStorage
-            localStorage.setItem('token', token);
+            localStorage.setItem('token', token); //que es token exactamente?
             localStorage.setItem('correo', correo);  // Guardar el correo también
         
             alert('Inicio de sesión exitoso!');

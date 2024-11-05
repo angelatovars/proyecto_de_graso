@@ -1,7 +1,5 @@
-from mysql.connector import Error
 from utils.db_config import create_connection
 import pymysql
-
 
 class UserModel:
     @staticmethod

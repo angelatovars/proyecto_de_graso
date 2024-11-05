@@ -6,6 +6,7 @@ canvas.height = 400;
 let nivel = 1;
 let tiempo = 0;
 let puntaje = 0;
+let movimientos = 0;
 let jugador = { x: 0, y: 0 };
 let laberinto, salida;
 const blockSize = 20;
@@ -95,19 +96,19 @@ function moverJugador(dir) {
             // El jugador se mueve a una celda vacía
             jugador.x = nuevoX;
             jugador.y = nuevoY;
-            puntaje += 5; // Sumar puntaje por moverse a una celda vacía
+            movimientos++;
             animarMovimiento();
         } else {
             // El jugador choca con una pared
-            puntaje -= 3; // Penalización por chocar
             animarColision();
         }
         dibujarLaberinto();
-        actualizarPuntaje();
 
         if (jugador.x === salida.x && jugador.y === salida.y) {
-            alert('¡Nivel completado!');
-            puntaje += calcularPuntaje();
+            const puntajeNivel = calcularPuntaje();
+            puntaje += puntajeNivel;
+            actualizarPuntaje();
+            alert(`¡Nivel ${nivel} completado!\nPuntaje del nivel: ${puntajeNivel}`);
             siguienteNivel();
         }
     }
@@ -132,16 +133,25 @@ function actualizarPuntaje() {
 
 // Calcular puntaje basado en el tiempo
 function calcularPuntaje() {
-    return 1000 - tiempo * 10;
+    const puntajeBase = 1000;
+    const penalizacionTiempo = tiempo * 5;
+    const penalizacionMovimientos = movimientos * 2;
+    
+    // El puntaje se reduce según el tiempo y movimientos
+    let puntajeFinal = puntajeBase - penalizacionTiempo - penalizacionMovimientos;
+    
+    // Asegurar que el puntaje no sea negativo
+    return Math.max(puntajeFinal, 0);
 }
 
 // Avanzar al siguiente nivel
 function siguienteNivel() {
     nivel++;
     tiempo = 0;
+    movimientos = 0;
     jugador = { x: 0, y: 0 };
     if (nivel <= 3) {
-        laberinto = laberintos[nivel]; // Cargar el laberinto del siguiente nivel
+        laberinto = laberintos[nivel];
         salida = { x: laberinto[0].length - 1, y: laberinto.length - 1 };
         dibujarLaberinto();
     } else {
@@ -157,7 +167,7 @@ function mostrarResumenFinal() {
 
 // Iniciar el juego
 function iniciarJuego() {
-    laberinto = laberintos[nivel]; // Cargar el laberinto del nivel actual
+    laberinto = laberintos[nivel];
     salida = { x: laberinto[0].length - 1, y: laberinto.length - 1 };
     dibujarLaberinto();
     setInterval(function() {

@@ -1,37 +1,41 @@
-document.addEventListener('DOMContentLoaded', function() {
-    cargarRanking();
-});
+document.addEventListener('DOMContentLoaded', function () { cargarRanking(); });
 
 function cargarRanking() {
-    // Realiza la solicitud GET para obtener los puntajes desde el servidor
-    fetch('http://localhost:5000/api/ranking', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data && data.length > 0) {
-            mostrarRanking(data);
+    fetch('http://localhost:5000/api/ranking', { method: 'GET', headers: { 'Content-Type': 'application/json', } }).then(response => response.json()).then(data => { if (data && data.length > 0) { const datosAgrupados = agruparPuntosPorUsuario(data); mostrarRanking(datosAgrupados); } else { alert('No se encontraron datos del ranking.'); } }).catch(error => { console.error('Error al cargar el ranking:', error); alert('Hubo un problema al cargar el ranking.'); });
+}
+
+// Función para agrupar los puntajes de cada usuario
+
+function agruparPuntosPorUsuario(data) {
+    const puntajesPorUsuario = {};
+    data.forEach(jugador => {
+        if (puntajesPorUsuario[jugador.nombre]) {
+            puntajesPorUsuario[jugador.nombre] += jugador.puntaje_total;
         } else {
-            alert('No se encontraron datos del ranking.');
+            puntajesPorUsuario[jugador.nombre] = jugador.puntaje_total;
         }
-    })
-    .catch(error => {
-        console.error('Error al cargar el ranking:', error);
-        alert('Hubo un problema al cargar el ranking.');
     });
+
+    // Convierte el objeto en un array y ordena por puntaje en orden descendente
+    const datosAgrupados = Object.keys(puntajesPorUsuario).map(nombre => ({
+        nombre,
+        puntaje_total: puntajesPorUsuario[nombre]
+    }));
+
+    // Ordena por puntaje de mayor a menor
+    datosAgrupados.sort((a, b) => b.puntaje_total - a.puntaje_total);
+
+    // Limita el resultado a los 25 mejores jugadores
+    return datosAgrupados.slice(0, 25);
 }
 
 function mostrarRanking(rankingData) {
-    const rankingBody = document.getElementById('rankingBody');
-    rankingBody.innerHTML = ''; // Limpiar el contenido anterior
+    const rankingBody = document.getElementById('rankingBody'); rankingBody.innerHTML = ''; // Limpia el contenido anterior
 
-    // Crear las filas del ranking
+    // Crear las filas de la tabla de ranking
     rankingData.forEach((jugador, index) => {
         const fila = document.createElement('tr');
-        
+
         // Columna del puesto
         const puestoCelda = document.createElement('td');
         if (index === 0) {
@@ -62,6 +66,4 @@ function mostrarRanking(rankingData) {
     });
 }
 
-function volverAlMenu() {
-    window.location.href = '../pages/index.html';
-}
+function volverAlMenu() { window.location.href = '../pages/index.html'; }

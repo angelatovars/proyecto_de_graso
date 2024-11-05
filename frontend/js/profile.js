@@ -1,16 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const correo = localStorage.getItem('correo'); // Obtén el correo almacenado en localStorage después del login
+    const correo = localStorage.getItem('correo');
 
     if (!correo) {
         alert('Debe iniciar sesión');
-        window.location.href = '../pages/login.html'; // Redirigir si no hay correo en localStorage
+        window.location.href = '../pages/login.html';
         return;
     }
 
-    // Botón para recuperar información (GET)
-    document.getElementById('recuperarInfo').addEventListener('click', function(e) {
-        e.preventDefault();
+    // Cargar datos del usuario automáticamente
+    cargarDatosUsuario(correo);
 
+    // Función para cargar los datos del usuario
+    function cargarDatosUsuario(correo) {
         fetch(`http://localhost:5000/api/profile?correo=${encodeURIComponent(correo)}`, {
             method: 'GET',
             headers: {
@@ -20,13 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data) {
-                // Autocompletar los campos del perfil
                 document.getElementById('nombre').value = data.nombre;
-                document.getElementById('correo').value = data.correo; // Solo lectura
+                document.getElementById('correo').value = data.correo;
                 document.getElementById('edad').value = data.edad;
                 document.getElementById('temaPreferido').value = data.tema_preferido;
                 document.getElementById('nivelPreferido').value = data.nivel_preferido;
-                document.getElementById('notificaciones').checked = data.notificaciones;
             } else {
                 alert('No se encontraron datos del perfil');
             }
@@ -35,30 +34,36 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error al obtener el perfil:', error);
             alert('Hubo un problema al cargar el perfil.');
         });
-    });
+    }
 
     // Botón para guardar los cambios (POST)
     document.getElementById('guardarCambios').addEventListener('click', function(e) {
         e.preventDefault();
         
+        const edad = parseInt(document.getElementById('edad').value);
+        
+        // Validación de edad
+        if (edad < 17 || edad > 28) {
+            alert('La edad debe estar entre 17 y 28 años.');
+            return;
+        }
+
         const nombre = document.getElementById('nombre').value;
-        const edad = document.getElementById('edad').value;
         const temaPreferido = document.getElementById('temaPreferido').value;
         const nivelPreferido = document.getElementById('nivelPreferido').value;
-        const notificaciones = document.getElementById('notificaciones').checked;
 
         // Hacer la solicitud de actualización
         fetch(`http://localhost:5000/api/profile?correo=${encodeURIComponent(correo)}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify({
                 nombre,
                 edad,
                 tema_preferido: temaPreferido,
-                nivel_preferido: nivelPreferido,
-                notificaciones
+                nivel_preferido: nivelPreferido
             })
         })
         .then(response => response.json())

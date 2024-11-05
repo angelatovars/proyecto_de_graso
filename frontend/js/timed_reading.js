@@ -4,6 +4,8 @@ let cronometroInterval;
 let puntaje = 0;
 let nivelActual = 1;
 let recognition;
+let vidas = 3;
+let fraseCompletada = false;
 
 // Textos y tiempo por nivel
 const niveles = {
@@ -31,18 +33,115 @@ const niveles = {
 
 // Iniciar el cronómetro
 function iniciarCronometro() {
+    fraseCompletada = false;
     mostrarTextoNivel();
+    actualizarVidas();
     startTime = Date.now() - elapsedTime;
     cronometroInterval = setInterval(actualizarCronometro, 1000);
     document.getElementById('startButton').disabled = true;
+    document.getElementById('btnTerminado').style.display = 'block';
 }
+
+// función actualizar displa de vidas
+function actualizarVidas() {
+    document.getElementById('vidas').innerHTML = '❤️'.repeat(vidas);
+}
+
+// Función para verificar si la frase fue completada correctamente
+function verificarFrase() {
+    const textoNivel = niveles[nivelActual].texto.toLowerCase();
+    const vozDetectada = document.getElementById('vozDetectada').innerText.toLowerCase();
+
+//Comparar las palabras detectadas con el texto del nivel
+const palabrasTexto = textoNivel.split(' ');
+    const palabrasDetectadas = vozDetectada.split(' ');
+    
+    const coincidencias = palabrasTexto.filter(palabra => 
+        palabrasDetectadas.includes(palabra)
+    ).length;
+    
+    const porcentajeCoincidencia = (coincidencias / palabrasTexto.length) * 100;
+    
+    if (porcentajeCoincidencia >= 80) { // Si coincide al menos el 80%
+        mostrarExito();
+        calcularPuntaje();
+    } else {
+        perderVida();
+    }
+}
+
+// Función para mostrar éxito
+function mostrarExito() {
+    const mensajeDiv = document.getElementById('mensaje');
+    mensajeDiv.innerHTML = `
+        <div class="mensaje-exito">
+            <h3>¡Excelente trabajo! 🎉</h3>
+            <p>Has completado correctamente la lectura</p>
+            <p>+100 puntos</p>
+            <button onclick="siguienteNivel()" class="btn-siguiente">Siguiente nivel</button>
+        </div>
+    `;
+    mensajeDiv.style.display = 'block';
+    detenerCronometro();
+}
+
+
 
 // Detener el cronómetro
 function detenerCronometro() {
     clearInterval(cronometroInterval);
     document.getElementById('startButton').disabled = false;
-    calcularPuntaje();
 }
+
+// Función para perder vida
+function perderVida() {
+    vidas--;
+    actualizarVidas();
+    
+    const mensajeDiv = document.getElementById('mensaje');
+    if (vidas > 0) {
+        mensajeDiv.innerHTML = `
+            <div class="mensaje-error">
+                <h3>¡Ups! 😕</h3>
+                <p>No has completado correctamente la frase.</p>
+                <p>Te quedan ${vidas} vidas</p>
+                <button onclick="reintentar()" class="btn-reintentar">Intentar de nuevo</button>
+            </div>
+        `;
+    } else {
+        gameOver();
+    }
+    mensajeDiv.style.display = 'block';
+}
+
+// Función de Game Over
+function gameOver() {
+    const mensajeDiv = document.getElementById('mensaje');
+    mensajeDiv.innerHTML = `
+        <div class="mensaje-gameover">
+            <h3>¡Game Over! 😢</h3>
+            <p>Has perdido todas tus vidas</p>
+            <p>Puntaje final: ${puntaje}</p>
+            <button onclick="reiniciarJuego()" class="btn-reiniciar">Jugar de nuevo</button>
+            <button onclick="volverAlMenu()" class="btn-menu">Volver al menú</button>
+        </div>
+    `;
+    mensajeDiv.style.display = 'block';
+    detenerCronometro();
+    guardarPuntajeBD();
+}
+
+function reiniciarJuego() {
+    vidas = 3;
+    puntaje = 0;
+    nivelActual = 1;
+    elapsedTime = 0;
+    document.getElementById('mensaje').style.display = 'none';
+    document.getElementById('puntaje').innerText = `🏆 Puntaje: 0`;
+    iniciarCronometro();
+}
+
+
 
 // Actualizar el cronómetro en pantalla
 function actualizarCronometro() {
@@ -95,9 +194,35 @@ function calcularPuntaje() {
 
 // Pasar al siguiente nivel
 function siguienteNivel() {
-    nivelActual++;
-    elapsedTime = 0;
-    iniciarCronometro();
+    if (nivelActual < 5) {
+        nivelActual++;
+        elapsedTime = 0;
+        document.getElementById('mensaje').style.display = 'none';
+        // Dar vida extra si tiene menos de 3
+        if (vidas < 3) {
+            vidas++;
+            actualizarVidas();
+            alert('¡Has ganado una vida extra! ❤️');
+        }
+        iniciarCronometro();
+    } else {
+        mostrarVictoria();
+    }
+}
+
+// Función para mostrar victoria
+function mostrarVictoria() {
+    const mensajeDiv = document.getElementById('mensaje');
+    mensajeDiv.innerHTML = `
+        <div class="mensaje-victoria">
+            <h3>¡Felicitaciones! 🏆</h3>
+            <p>Has completado todos los niveles</p>
+            <p>Puntaje final: ${puntaje}</p>
+            <button onclick="volverAlMenu()" class="btn-menu">Volver al menú</button>
+        </div>
+    `;
+    mensajeDiv.style.display = 'block';
+    guardarPuntajeBD();
 }
 
 // Guardar el puntaje en la base de datos
