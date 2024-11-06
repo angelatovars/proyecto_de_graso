@@ -1,16 +1,16 @@
-import os 
+import os
 import sys
-sys.patch.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
-from settings.config import Config
-from routes.profile_routes import api as profile_api
-from routes.auth_routes import api as auth_api
-from routes.ranking_routes import ranking_bp # Añadimos la importación del admin
-from utils.db_config import create_connection
+from backend.settings.config import Config
+from backend.routes.profile_routes import api as profile_api
+from backend.routes.auth_routes import api as auth_api
+from backend.routes.ranking_routes import ranking_bp
+from backend.utils.db_config import create_connection
 
 # Crear la aplicación de Flask
 app = Flask(__name__)
