@@ -1,6 +1,7 @@
 from utils.db_config import create_connection
 import pymysql
 
+
 class UserModel:
     @staticmethod
     def create_user(nombre, correo, contraseña, edad):
