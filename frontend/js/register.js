@@ -1,60 +1,40 @@
-document.getElementById('registerForm').addEventListener('submit', async (event) => {
-    event.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
+    const registerForm = document.getElementById('registerForm');
+    
+    registerForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        console.log('Iniciando registro...');
 
-    const nombre = document.getElementById('nombre').value;
-    const correo = document.getElementById('correo').value;
-    const contraseña = document.getElementById('contraseña').value;
-    const confirmarContraseña = document.getElementById('confirmarContraseña').value;
-    const edad = parseInt(document.getElementById('edad').value);
+        const formData = {
+            nombre: document.getElementById('nombre').value,
+            correo: document.getElementById('correo').value,
+            contraseña: document.getElementById('contraseña').value,
+            edad: parseInt(document.getElementById('edad').value)
+        };
 
-    // Validación de contraseñas
-    if (contraseña !== confirmarContraseña) {
-        alert('Las contraseñas no coinciden');
-        return;
-    }
+        console.log('Datos a enviar:', formData);
 
-    // Validación de edad
-    if (edad < 17 || edad > 28) {
-        alert('La edad debe estar entre 17 y 28 años.');
-        return;
-    }
-
-    try {
-        // Verificar si el correo ya existe
-        const verificacionCorreo = await fetch('http://localhost:5000/api/auth/verificar-correo', {
+        fetch('http://localhost:5000/api/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ correo })
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Datos de respuesta:', data);
+            if (data.success) {
+                alert('Registro exitoso');
+                window.location.href = 'login.html';
+            } else {
+                alert(data.message || 'Error en el registro');
+            }
+        })
+        .catch(error => {
+            console.error('Error en el registro:', error);
+            alert('Error al intentar registrar. Por favor, intenta nuevamente.');
         });
-
-        const resultadoVerificacion = await verificacionCorreo.json();
-
-        if (resultadoVerificacion.exists) {
-            alert('Este correo ya está registrado');
-            return;
-        }
-
-        // Si el correo no existe, proceder con el registro
-        const response = await fetch('http://localhost:5000/api/auth/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ nombre, correo, contraseña, edad })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            alert('Registro exitoso');
-            window.location.href = '../pages/login.html';
-        } else {
-            alert(data.message || 'Error en el registro');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error en la conexión. Inténtalo nuevamente.');
-    }
+    });
 });
