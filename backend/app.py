@@ -6,6 +6,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
+
 from backend.settings.config import Config
 from backend.routes.profile_routes import api as profile_api
 from backend.routes.auth_routes import api as auth_api
@@ -14,6 +15,7 @@ from backend.utils.db_config import create_connection
 from backend.routes.activity_routes import api as activity_api
 from backend.routes.game_routes import api as game_api
 from backend.routes.results_routes import api as results_api
+
 
 # Crear la aplicación de Flask
 app = Flask(__name__)
@@ -34,11 +36,6 @@ CORS(app, resources={
 
 # Inicializar JWT
 jwt = JWTManager(app)
-
-# Importar y registrar las demás rutas
-from routes.activity_routes import api as activity_api
-from routes.game_routes import api as game_api
-from routes.results_routes import api as results_api
 
 app.register_blueprint(auth_api, url_prefix='/api/auth')
 app.register_blueprint(activity_api, url_prefix='/api/activities')
