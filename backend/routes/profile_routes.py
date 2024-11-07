@@ -1,6 +1,6 @@
-from flask import Blueprint, jsonify, request
-from flask_cors import CORS, cross_origin
-from controllers.profile_controller import ProfileController
+from backend.flask import Blueprint, jsonify, request
+from backend.flask_cors import CORS, cross_origin
+from backend.controllers.profile_controller import ProfileController
 
 # Definir un Blueprint para las rutas del perfil
 api = Blueprint('profile_api', __name__)
