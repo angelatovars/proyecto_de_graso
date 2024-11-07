@@ -2,24 +2,52 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Redireccionando...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MenteAprende - Redireccionando</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .loader {
+            margin-bottom: 20px;
+        }
+    </style>
     <script>
-        // Verificar si hay token de sesión
-        const token = localStorage.getItem('token');
-        
-        // Definir la ruta base para GitHub Pages
-        const basePath = '/proyecto_de_graso';
-        
-        // Redirigir según si está autenticado o no
-        window.location.href = token 
-            ? `${basePath}/frontend/pages/index.html`
-            : `${basePath}/frontend/pages/login.html`;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar si hay token de sesión
+            const token = localStorage.getItem('token');
+            
+            // Definir la ruta base para GitHub Pages
+            const basePath = '/proyecto_de_graso';
+            
+            try {
+                // Redirigir según autenticación
+                window.location.href = token 
+                    ? `${basePath}/frontend/pages/index.html`
+                    : `${basePath}/frontend/pages/login.html`;
+            } catch (error) {
+                console.error('Error en redirección:', error);
+                // Redirección fallback
+                window.location.href = `${basePath}/frontend/pages/login.html`;
+            }
+        });
     </script>
 </head>
 <body>
+    <div class="loader">
+        <img src="frontend/assets/images/loader.gif" alt="Cargando..." 
+             onerror="this.style.display='none'">
+    </div>
     <p>Redireccionando...</p>
-    <p>Si no eres redireccionado, 
-        <a href="/proyecto_de_graso/frontend/pages/login.html">haz clic aquí</a>
+    <p>Si no eres redireccionado automáticamente, 
+        <a href="./frontend/pages/login.html">haz clic aquí</a>
     </p>
 </body>
 </html>
