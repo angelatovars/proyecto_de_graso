@@ -1,6 +1,6 @@
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from controllers.ranking_controller import RankingController
+from backend.flask import Blueprint, request, jsonify
+from backend.flask_jwt_extended import jwt_required, get_jwt_identity
+from backend.controllers.ranking_controller import RankingController
 
 ranking_bp = Blueprint('ranking', __name__)
 
