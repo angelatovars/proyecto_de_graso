@@ -15,9 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
     gestionarLecturaCronometro();
 });
 
-
-// Aquí iría el resto de la lógica de la página después de la validación del token
-
 // Función para animar la barra de navegación al hacer scroll
 function animarBarraNavegacion() {
     const navbar = document.querySelector('.navbar');
@@ -33,15 +30,21 @@ function animarBarraNavegacion() {
 // Función para verificar si hay un usuario autenticado
 function verificarSesion() {
     const token = localStorage.getItem('jwt-token');
-    if (token) {
-        document.querySelector('#btnLogin').style.display = 'none';
-        document.querySelector('#btnProfile').style.display = 'block';
-        document.querySelector('#btnLogout').style.display = 'block';
-    } else {
-        document.querySelector('#btnLogin').style.display = 'block';
-        document.querySelector('#btnProfile').style.display = 'none';
-        document.querySelector('#btnLogout').style.display = 'none';
-        redirigirSiNoAutenticado();
+    const btnLogin = document.querySelector('#btnLogin');
+    const btnProfile = document.querySelector('#btnProfile');
+    const btnLogout = document.querySelector('#btnLogout');
+
+    if (btnLogin && btnProfile && btnLogout) {
+        if (token) {
+            btnLogin.style.display = 'none';
+            btnProfile.style.display = 'block';
+            btnLogout.style.display = 'block';
+        } else {
+            btnLogin.style.display = 'block';
+            btnProfile.style.display = 'none';
+            btnLogout.style.display = 'none';
+            redirigirSiNoAutenticado();
+        }
     }
 }
 
@@ -54,7 +57,10 @@ function logout() {
 }
 
 // Añadiendo el evento de clic al botón de logout
-document.querySelector('#btnLogout').addEventListener('click', logout);
+const btnLogout = document.querySelector('#btnLogout');
+if (btnLogout) {
+    btnLogout.addEventListener('click', logout);
+}
 
 // Función para redirigir al usuario si no está autenticado
 function redirigirSiNoAutenticado() {
@@ -69,7 +75,6 @@ function redirigirSiNoAutenticado() {
 function cargarPerfilSiEsNecesario() {
     const paginaActual = window.location.pathname.split('/').pop();
     if (paginaActual === 'profile.html') {
-        // Realiza una solicitud a la API para obtener el perfil del usuario
         fetch('http://localhost:5000/profile', {
             method: 'GET',
             headers: {
@@ -79,7 +84,6 @@ function cargarPerfilSiEsNecesario() {
             .then(response => response.json())
             .then(data => {
                 if (data) {
-                    // Actualiza los elementos del perfil con los datos obtenidos
                     document.querySelector('#nombreUsuario').textContent = data.nombre;
                     document.querySelector('#correoUsuario').textContent = data.correo;
                     document.querySelector('#edadUsuario').textContent = data.edad;
@@ -108,14 +112,12 @@ function mostrarNotificaciones() {
 function cargarRankingSiEsNecesario() {
     const paginaActual = window.location.pathname.split('/').pop();
     if (paginaActual === 'ranking.html') {
-        // Realiza una solicitud a la API para obtener el ranking
         fetch('http://localhost:5000/ranking', {
             method: 'GET'
         })
             .then(response => response.json())
             .then(data => {
                 if (data) {
-                    // Actualiza la tabla de ranking con los datos obtenidos
                     const tablaRanking = document.querySelector('#tablaRanking');
                     data.forEach(jugador => {
                         const fila = document.createElement('tr');
@@ -169,7 +171,6 @@ function gestionarFormularioDeLogin() {
             const correo = document.querySelector('#correo').value;
             const contraseña = document.querySelector('#contraseña').value;
 
-            // Solicitud de inicio de sesión
             fetch('http://localhost:5000/api/auth/login', {
                 method: 'POST',
                 headers: {
@@ -205,7 +206,6 @@ function gestionarFormularioDeRegistro() {
             const contraseña = document.querySelector('#contraseña').value;
             const edad = document.querySelector('#edad').value;
 
-            // Solicitud de registro
             fetch('http://localhost:5000/api/auth/register', {
                 method: 'POST',
                 headers: {
@@ -240,7 +240,6 @@ function gestionarActualizacionPerfil() {
             const correo = document.querySelector('#correo').value;
             const notificaciones = document.querySelector('#notificaciones').checked;
 
-            // Solicitud de actualización de perfil
             fetch('http://localhost:5000/profile', {
                 method: 'PUT',
                 headers: {
@@ -274,7 +273,6 @@ function gestionarCambioContraseña() {
             const contraseñaActual = document.querySelector('#contraseñaActual').value;
             const nuevaContraseña = document.querySelector('#nuevaContraseña').value;
 
-            // Solicitud de cambio de contraseña
             fetch('http://localhost:5000/auth/change-password', {
                 method: 'PUT',
                 headers: {
@@ -310,10 +308,12 @@ function gestionarLecturaCronometro() {
         });
 
         const botonTerminarLectura = document.querySelector('#btnTerminarLectura');
-        botonTerminarLectura.addEventListener('click', function () {
-            const tiempoLectura = (new Date() - inicioTiempo) / 1000;
-            mostrarMensaje(`Tiempo de lectura: ${tiempoLectura} segundos.`, 'info');
-        });
+        if (botonTerminarLectura) {
+            botonTerminarLectura.addEventListener('click', function () {
+                const tiempoLectura = (new Date() - inicioTiempo) / 1000;
+                mostrarMensaje(`Tiempo de lectura: ${tiempoLectura} segundos.`, 'info');
+            });
+        }
     }
 }
 
@@ -328,5 +328,6 @@ function mostrarMensaje(mensaje, tipo = 'info') {
         mensajeDiv.remove();
     }, 3000);
 }
+
 // Ejemplo de cómo mostrar un mensaje (para pruebas, se puede eliminar más adelante)
 mostrarMensaje('¡Bienvenido a la plataforma!', 'success');
