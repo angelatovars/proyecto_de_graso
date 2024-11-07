@@ -35,11 +35,6 @@ CORS(app, resources={
 # Inicializar JWT
 jwt = JWTManager(app)
 
-# Registrar todos los Blueprints
-app.register_blueprint(profile_api, url_prefix="/")
-app.register_blueprint(auth_api, url_prefix='/auth')
-app.register_blueprint(ranking_bp, url_prefix='/api')
-
 # Importar y registrar las demás rutas
 from routes.activity_routes import api as activity_api
 from routes.game_routes import api as game_api
