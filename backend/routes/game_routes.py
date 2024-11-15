@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify
-from models.game_model import GameModel
+from backend.flask import Blueprint, jsonify
+from backend.models.game_model import GameModel
 
 api = Blueprint('game_api', __name__)
 

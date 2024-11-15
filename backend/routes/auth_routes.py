@@ -1,7 +1,7 @@
-from flask import Blueprint, request, jsonify
-from controllers.auth_controller import AuthController
-from flask_jwt_extended import jwt_required
-from models.user_model import UserModel
+from backend.flask import Blueprint, request, jsonify
+from backend.controllers.auth_controller import AuthController
+from backend.flask_jwt_extended import jwt_required
+from backend.models.user_model import UserModel
 
 api = Blueprint('auth', __name__)
 
