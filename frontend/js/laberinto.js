@@ -1,7 +1,5 @@
 const canvas = document.getElementById('laberintoCanvas');
 const ctx = canvas.getContext('2d');
-canvas.width = 400;
-canvas.height = 400;
 
 let nivel = 1;
 let tiempo = 0;
@@ -54,13 +52,19 @@ const laberintos = {
         [1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1],
         [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0],
         [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
     ]
 };
 
+function ajustarCanvas() {
+    const filas = laberinto.length;
+    const columnas = laberinto[0].length;
+    canvas.width = columnas * blockSize;
+    canvas.height = filas * blockSize;
+}
 
 function dibujarLaberinto() {
-    const blockSize = canvas.width / laberinto.length;
+    ajustarCanvas();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (let y = 0; y < laberinto.length; y++) {

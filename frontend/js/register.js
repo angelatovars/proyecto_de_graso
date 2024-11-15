@@ -1,40 +1,31 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const registerForm = document.getElementById('registerForm');
-    
-    registerForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        
-        console.log('Iniciando registro...');
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-        const formData = {
-            nombre: document.getElementById('nombre').value,
-            correo: document.getElementById('correo').value,
-            contraseña: document.getElementById('contraseña').value,
-            edad: parseInt(document.getElementById('edad').value)
-        };
+    const nombre = document.getElementById('nombre').value;
+    const correo = document.getElementById('correo').value;
+    const contraseña = document.getElementById('contraseña').value;
 
-        console.log('Datos a enviar:', formData);
-
-        fetch('http://localhost:5000/api/auth/register', {
+    try {
+        const response = await fetch('http://localhost:5000/api/auth/register', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Datos de respuesta:', data);
-            if (data.success) {
-                alert('Registro exitoso');
-                window.location.href = 'login.html';
-            } else {
-                alert(data.message || 'Error en el registro');
-            }
-        })
-        .catch(error => {
-            console.error('Error en el registro:', error);
-            alert('Error al intentar registrar. Por favor, intenta nuevamente.');
+            body: JSON.stringify({ nombre, correo, contraseña })
         });
-    });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('Registro exitoso. Ahora puedes iniciar sesión.');
+            // Redirigir al inicio de sesión
+            window.location.href = 'login.html';
+        } else {
+            alert('Error: ' + data.message);
+        }
+
+    } catch (error) {
+        console.error('Error al registrar:', error);
+        alert('Hubo un problema al intentar registrarse.');
+    }
 });

@@ -108,3 +108,17 @@ p {
     text-decoration: none;
     cursor: pointer;
 }
+
+.laberinto-container {
+    width: 100%; 
+    height: 400px;
+    overflow: auto; 
+    border: 1px solid #ccc; 
+}
+
+canvas {
+    width: 300px; 
+    height: 600px; /* Ajusta según sea necesario */
+    border: 2px solid black;
+    background-color: #f0f0f0;
+}
